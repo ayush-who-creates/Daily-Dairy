@@ -1,0 +1,1347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Digital Diary | Ayush Yadav</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;600;700&family=Patrick+Hand&family=Playfair+Display:ital,wght@0,600;0,700;1,500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DIGITAL DIARY — STYLES
+   Theme: premium notebook / paper inspired
+   Palette: cream, white, soft blue, pastel green
+   ============================================================ */
+:root{
+  --cream:#f7f3ea;
+  --paper:#fffdf8;
+  --ink:#3b3128;
+  --ink-soft:#7a6f60;
+  --blue:#a9c9d6;
+  --blue-deep:#6f9bb0;
+  --green:#b7d3b5;
+  --green-deep:#7fa97c;
+  --accent:#c98a6b;
+  --line:#e6dfd0;
+  --shadow:0 10px 30px rgba(80,60,30,0.08);
+  --shadow-lg:0 18px 50px rgba(80,60,30,0.14);
+  --radius:18px;
+  --font-display:'Georgia','Times New Roman',serif;
+  --font-body:'Segoe UI',system-ui,-apple-system,sans-serif;
+  --font-size-base:16px;
+}
+[data-theme="dark"]{
+  --cream:#221f1a;
+  --paper:#2b2722;
+  --ink:#efe7d8;
+  --ink-soft:#b9ad99;
+  --line:#3c372e;
+  --shadow:0 10px 30px rgba(0,0,0,0.35);
+  --shadow-lg:0 18px 50px rgba(0,0,0,0.45);
+}
+*{box-sizing:border-box; margin:0; padding:0;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:var(--font-body);
+  font-size:var(--font-size-base);
+  background:var(--cream);
+  color:var(--ink);
+  min-height:100vh;
+  transition:background .4s ease,color .4s ease;
+  overflow-x:hidden;
+}
+::-webkit-scrollbar{width:10px;}
+::-webkit-scrollbar-thumb{background:var(--blue); border-radius:10px;}
+::-webkit-scrollbar-track{background:transparent;}
+
+/* ---------- Loading screen ---------- */
+#loadingScreen{
+  position:fixed; inset:0; background:var(--cream); z-index:9999;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+.book{
+  width:70px; height:54px; border:4px solid var(--blue-deep); border-radius:6px;
+  position:relative; animation:bookFloat 1.4s ease-in-out infinite;
+}
+.book::after{content:'';position:absolute;left:50%;top:-4px;bottom:-4px;width:4px;background:var(--accent);transform:translateX(-50%);}
+@keyframes bookFloat{0%,100%{transform:translateY(0) rotate(-2deg);}50%{transform:translateY(-12px) rotate(2deg);}}
+#loadingScreen p{font-family:var(--font-display); color:var(--ink-soft); letter-spacing:2px; text-transform:uppercase; font-size:13px;}
+#loadingScreen.hidden{opacity:0; visibility:hidden;}
+
+/* ---------- Layout shell ---------- */
+.app{display:flex; min-height:100vh;}
+
+/* ---------- Sidebar ---------- */
+.sidebar{
+  width:240px; background:var(--paper); border-right:1px solid var(--line);
+  display:flex; flex-direction:column; padding:24px 16px; position:sticky; top:0; height:100vh;
+  box-shadow:var(--shadow); z-index:100; transition:transform .35s ease, background .4s ease;
+}
+.sidebar .brand{display:flex; align-items:center; gap:10px; padding:0 8px 22px; border-bottom:1px solid var(--line); margin-bottom:18px;}
+.sidebar .brand .icon{font-size:28px;}
+.sidebar .brand h1{font-family:var(--font-display); font-size:19px; line-height:1.1;}
+.sidebar .brand span{display:block; font-size:11px; color:var(--ink-soft); margin-top:2px;}
+.nav-item{
+  display:flex; align-items:center; gap:12px; padding:12px 14px; border-radius:12px;
+  cursor:pointer; color:var(--ink-soft); font-size:14.5px; font-weight:500; margin-bottom:4px;
+  transition:background .25s, color .25s, transform .2s; user-select:none;
+}
+.nav-item .emoji{font-size:18px;}
+.nav-item:hover{background:var(--cream); color:var(--ink); transform:translateX(3px);}
+.nav-item.active{background:linear-gradient(135deg,var(--blue),var(--green)); color:#2c3a30; font-weight:700; box-shadow:var(--shadow);}
+.sidebar-footer{margin-top:auto; padding-top:14px; border-top:1px solid var(--line); font-size:11px; color:var(--ink-soft); text-align:center;}
+.sidebar-toggle{display:none;}
+
+/* ---------- Main content ---------- */
+.main{flex:1; padding:30px 38px 80px; max-width:1200px; margin:0 auto; width:100%;}
+.topbar{display:flex; justify-content:space-between; align-items:center; margin-bottom:26px; flex-wrap:wrap; gap:14px;}
+.topbar h2{font-family:var(--font-display); font-size:26px;}
+.searchBox{position:relative;}
+.searchBox input{
+  padding:10px 16px 10px 38px; border:1px solid var(--line); border-radius:30px; background:var(--paper);
+  color:var(--ink); font-size:14px; width:240px; outline:none; transition:box-shadow .25s, width .25s;
+}
+.searchBox input:focus{box-shadow:0 0 0 3px rgba(111,155,176,0.25); width:280px;}
+.searchBox::before{content:'🔍'; position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:13px;}
+.iconBtn{
+  background:var(--paper); border:1px solid var(--line); width:42px; height:42px; border-radius:50%;
+  font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center; box-shadow:var(--shadow);
+  transition:transform .2s;
+}
+.iconBtn:hover{transform:scale(1.08) rotate(-6deg);}
+
+.page{display:none; animation:fadeIn .5s ease;}
+.page.active{display:block;}
+@keyframes fadeIn{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+@keyframes slideUp{from{opacity:0; transform:translateY(26px);} to{opacity:1; transform:translateY(0);}}
+
+/* ---------- Card base ---------- */
+.card{
+  background:var(--paper); border:1px solid var(--line); border-radius:var(--radius);
+  box-shadow:var(--shadow); padding:22px; transition:box-shadow .25s, transform .25s;
+}
+.card:hover{box-shadow:var(--shadow-lg);}
+
+/* ---------- Hero / welcome ---------- */
+.hero{
+  background:linear-gradient(135deg, var(--blue) 0%, var(--green) 100%);
+  border-radius:24px; padding:34px 36px; color:#2c3a30; box-shadow:var(--shadow-lg);
+  position:relative; overflow:hidden; margin-bottom:26px; animation:slideUp .6s ease;
+}
+.hero::after{content:'📔'; position:absolute; right:-10px; bottom:-30px; font-size:160px; opacity:.18; transform:rotate(-12deg);}
+.hero h2{font-family:var(--font-display); font-size:30px; margin-bottom:6px;}
+.hero .clock{font-size:34px; font-weight:700; letter-spacing:1px; margin-top:10px;}
+.hero .datestr{font-size:14px; opacity:.85; margin-top:4px;}
+.hero .quote{margin-top:16px; font-style:italic; font-size:14px; max-width:540px; background:rgba(255,255,255,.35); padding:10px 14px; border-radius:12px;}
+
+/* ---------- Stat grid ---------- */
+.statGrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(170px,1fr)); gap:16px; margin-bottom:26px;}
+.statCard{text-align:center; animation:slideUp .5s ease;}
+.statCard .num{font-family:var(--font-display); font-size:32px; font-weight:700; color:var(--blue-deep);}
+.statCard .label{font-size:12.5px; color:var(--ink-soft); margin-top:4px; text-transform:uppercase; letter-spacing:.5px;}
+
+/* ---------- Buttons ---------- */
+.btn{
+  position:relative; overflow:hidden; border:none; border-radius:30px; padding:11px 22px; font-size:14px;
+  font-weight:600; cursor:pointer; display:inline-flex; align-items:center; gap:8px; transition:transform .2s, box-shadow .2s;
+}
+.btn-primary{background:linear-gradient(135deg,var(--blue-deep),var(--green-deep)); color:#fff; box-shadow:var(--shadow);}
+.btn-primary:hover{transform:translateY(-2px); box-shadow:var(--shadow-lg);}
+.btn-outline{background:transparent; border:1.5px solid var(--line); color:var(--ink);}
+.btn-outline:hover{background:var(--cream);}
+.btn-danger{background:#e08585; color:#fff;}
+.btn-sm{padding:7px 14px; font-size:12.5px;}
+.ripple{position:absolute; border-radius:50%; background:rgba(255,255,255,.6); transform:scale(0); animation:rippleAnim .6s linear; pointer-events:none;}
+@keyframes rippleAnim{to{transform:scale(4); opacity:0;}}
+
+/* ---------- Form ---------- */
+.formGrid{display:grid; gap:16px;}
+label{font-size:13px; font-weight:600; color:var(--ink-soft); margin-bottom:6px; display:block;}
+input[type=text], input[type=date], textarea, select{
+  width:100%; padding:12px 14px; border:1.5px solid var(--line); border-radius:12px; background:var(--cream);
+  color:var(--ink); font-family:var(--font-body); font-size:14.5px; outline:none; transition:border .2s, box-shadow .2s;
+}
+input:focus, textarea:focus, select:focus{border-color:var(--blue-deep); box-shadow:0 0 0 3px rgba(111,155,176,0.18);}
+textarea{min-height:220px; resize:vertical; line-height:1.6; font-family:Georgia,serif;}
+.moodPicker{display:flex; flex-wrap:wrap; gap:10px;}
+.moodOpt{
+  cursor:pointer; padding:10px 14px; border-radius:14px; border:2px solid var(--line); background:var(--paper);
+  font-size:14px; display:flex; gap:6px; align-items:center; transition:transform .2s, border-color .2s;
+}
+.moodOpt:hover{transform:translateY(-2px);}
+.moodOpt.selected{border-color:var(--accent); background:var(--cream); box-shadow:var(--shadow);}
+.metaRow{display:flex; gap:16px; flex-wrap:wrap;}
+.metaRow > div{flex:1; min-width:180px;}
+.wordCounter{font-size:12px; color:var(--ink-soft); text-align:right; margin-top:6px;}
+.draftNote{font-size:12px; color:var(--green-deep); margin-top:4px;}
+
+/* ---------- Entries grid ---------- */
+.toolsRow{display:flex; gap:12px; flex-wrap:wrap; margin-bottom:20px; align-items:center;}
+.filterChip{
+  padding:7px 14px; border-radius:20px; border:1.5px solid var(--line); background:var(--paper); font-size:13px;
+  cursor:pointer; transition:.2s;
+}
+.filterChip.active{background:var(--blue); border-color:var(--blue-deep); font-weight:700;}
+.entriesGrid{display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:18px;}
+.entryCard{display:flex; flex-direction:column; gap:8px; animation:slideUp .45s ease; position:relative;}
+.entryCard .topRow{display:flex; justify-content:space-between; align-items:flex-start;}
+.entryCard .moodEmoji{font-size:26px;}
+.entryCard h3{font-family:var(--font-display); font-size:18px; margin-top:4px;}
+.entryCard .dateLine{font-size:12px; color:var(--ink-soft);}
+.entryCard .preview{font-size:13.5px; color:var(--ink-soft); line-height:1.5; flex:1;}
+.entryCard .cardActions{display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;}
+.favBtn{background:none; border:none; font-size:18px; cursor:pointer; transition:transform .2s;}
+.favBtn:hover{transform:scale(1.2);}
+.emptyState{text-align:center; padding:60px 20px; color:var(--ink-soft);}
+.emptyState .big{font-size:54px; margin-bottom:10px;}
+
+/* ---------- Calendar ---------- */
+.calHeader{display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;}
+.calHeader h3{font-family:var(--font-display); font-size:20px;}
+.calGrid{display:grid; grid-template-columns:repeat(7,1fr); gap:6px;}
+.calGrid .dow{text-align:center; font-size:11.5px; color:var(--ink-soft); font-weight:700; padding:4px 0;}
+.calDay{
+  aspect-ratio:1; border-radius:10px; display:flex; flex-direction:column; align-items:center; justify-content:center;
+  font-size:13px; cursor:pointer; background:var(--cream); position:relative; transition:.2s;
+}
+.calDay:hover{transform:scale(1.06);}
+.calDay.empty{background:transparent; cursor:default;}
+.calDay.hasEntry{background:linear-gradient(135deg,var(--blue),var(--green)); font-weight:700; color:#2c3a30;}
+.calDay.today{box-shadow:0 0 0 2px var(--accent);}
+.calDay .dot{width:5px; height:5px; border-radius:50%; background:var(--accent); margin-top:2px;}
+
+/* ---------- Analytics ---------- */
+.chartCard{margin-bottom:20px;}
+.chartCard h3{font-family:var(--font-display); font-size:18px; margin-bottom:14px;}
+canvas{max-width:100%;}
+
+/* ---------- Settings ---------- */
+.settingsRow{display:flex; justify-content:space-between; align-items:center; padding:16px 0; border-bottom:1px solid var(--line);}
+.settingsRow:last-child{border-bottom:none;}
+.colorSwatches{display:flex; gap:10px;}
+.swatch{width:30px; height:30px; border-radius:50%; cursor:pointer; border:3px solid transparent; transition:.2s;}
+.swatch.active{border-color:var(--ink);}
+.switch{position:relative; width:50px; height:26px;}
+.switch input{opacity:0; width:0; height:0;}
+.slider{position:absolute; inset:0; background:var(--line); border-radius:30px; cursor:pointer; transition:.3s;}
+.slider::before{content:''; position:absolute; width:20px; height:20px; left:3px; top:3px; background:#fff; border-radius:50%; transition:.3s;}
+input:checked + .slider{background:var(--blue-deep);}
+input:checked + .slider::before{transform:translateX(24px);}
+
+/* ---------- Modal / Reading mode ---------- */
+.modalOverlay{
+  position:fixed; inset:0; background:rgba(40,32,20,0.45); display:none; align-items:center; justify-content:center;
+  z-index:500; padding:20px; backdrop-filter:blur(2px);
+}
+.modalOverlay.show{display:flex; animation:fadeIn .3s ease;}
+.modalBox{
+  background:var(--paper); border-radius:20px; max-width:680px; width:100%; max-height:88vh; overflow-y:auto;
+  padding:30px 34px; box-shadow:var(--shadow-lg); position:relative; animation:slideUp .35s ease;
+}
+.modalBox .closeX{position:absolute; top:16px; right:18px; background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink-soft);}
+.modalBox h2{font-family:var(--font-display); font-size:26px; margin-bottom:6px;}
+.modalBox .readMeta{font-size:13px; color:var(--ink-soft); margin-bottom:18px;}
+.modalBox .readBody{font-family:Georgia,serif; font-size:16.5px; line-height:1.85; white-space:pre-wrap;}
+.progressBar{position:fixed; top:0; left:0; height:3px; background:var(--accent); z-index:600; transition:width .1s;}
+
+.confirmBox{max-width:380px; text-align:center;}
+.confirmBox .icon{font-size:40px; margin-bottom:10px;}
+.confirmBox .actions{display:flex; gap:10px; justify-content:center; margin-top:18px;}
+
+/* ---------- Toast ---------- */
+#toastWrap{position:fixed; bottom:26px; right:26px; display:flex; flex-direction:column; gap:10px; z-index:700;}
+.toast{
+  background:var(--ink); color:var(--paper); padding:13px 20px; border-radius:12px; font-size:13.5px; box-shadow:var(--shadow-lg);
+  animation:toastIn .35s ease; display:flex; align-items:center; gap:8px;
+}
+[data-theme="dark"] .toast{background:var(--paper); color:var(--ink); border:1px solid var(--line);}
+@keyframes toastIn{from{opacity:0; transform:translateX(40px);} to{opacity:1; transform:translateX(0);}}
+
+/* ---------- Scroll to top ---------- */
+#scrollTop{position:fixed; bottom:26px; left:26px; display:none; z-index:400;}
+
+/* ---------- Footer ---------- */
+.footer{text-align:center; padding:36px 0 10px; color:var(--ink-soft); font-size:13px; border-top:1px solid var(--line); margin-top:50px;}
+.footer .heart{color:var(--accent);}
+
+/* ---------- Favorites highlight ---------- */
+.favTag{position:absolute; top:14px; right:14px;}
+
+/* ============================================================
+   NOTEBOOK WRITING PAGE — premium handwritten journal redesign
+   ============================================================ */
+.notebook-stage{
+  position:relative;
+  min-height:780px;
+  border-radius:26px;
+  padding:50px 20px;
+  display:flex; align-items:center; justify-content:center;
+  background:
+    radial-gradient(ellipse at top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.18) 100%),
+    repeating-linear-gradient(90deg, #5b3a26 0px, #6b4630 38px, #5b3a26 40px),
+    linear-gradient(180deg,#5e3c27,#43291a);
+  overflow:hidden;
+}
+.notebook-stage::before{
+  content:''; position:absolute; inset:0;
+  background:repeating-linear-gradient(180deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 2px, transparent 2px, transparent 5px);
+  opacity:.5; pointer-events:none;
+}
+[data-theme="dark"] .notebook-stage{
+  background:
+    radial-gradient(ellipse at top, rgba(0,0,0,0) 0%, rgba(0,0,0,0.4) 100%),
+    repeating-linear-gradient(90deg, #1d1a16 0px, #242019 38px, #1d1a16 40px),
+    linear-gradient(180deg,#211c16,#15120e);
+}
+
+.notebook{
+  position:relative;
+  display:flex;
+  width:100%; max-width:1080px;
+  min-height:680px;
+  border-radius:14px;
+  box-shadow:0 35px 70px rgba(0,0,0,0.45), 0 10px 24px rgba(0,0,0,0.3);
+  animation:notebookOpen .9s cubic-bezier(.2,.8,.25,1) both;
+  transform-origin:center;
+}
+@keyframes notebookOpen{
+  from{opacity:0; transform:scale(.92) rotateX(8deg); }
+  to{opacity:1; transform:scale(1) rotateX(0);}
+}
+.notebook-spine{
+  width:26px; flex-shrink:0;
+  background:linear-gradient(90deg, rgba(0,0,0,0.28), rgba(0,0,0,0.05) 30%, rgba(0,0,0,0.05) 70%, rgba(0,0,0,0.28));
+  position:relative; z-index:5;
+  box-shadow:inset 0 0 14px rgba(0,0,0,0.35);
+}
+.notebook-page{
+  position:relative;
+  flex:1;
+  min-width:0;
+  background:
+    radial-gradient(ellipse at 90% 8%, rgba(120,90,50,0.07), transparent 45%),
+    linear-gradient(180deg, #fbf6e9 0%, #f8f1e1 100%);
+  background-color:#faf4e6;
+  padding:54px 46px 40px 64px;
+  display:flex; flex-direction:column;
+  box-shadow:inset 0 0 50px rgba(120,90,40,0.06);
+  animation:inkFade 1.1s ease both;
+  animation-delay:.15s;
+}
+[data-theme="dark"] .notebook-page{
+  background:linear-gradient(180deg,#2a2419,#241f16);
+  box-shadow:inset 0 0 50px rgba(0,0,0,0.4);
+}
+@keyframes inkFade{ from{opacity:0;} to{opacity:1;} }
+.notebook-page.left{ border-radius:14px 0 0 14px; }
+.notebook-page.right{ border-radius:0 14px 14px 0; }
+
+/* faint ruled lines */
+.notebook-page::after{
+  content:'';
+  position:absolute; left:64px; right:30px; top:198px; bottom:36px;
+  background-image:repeating-linear-gradient(180deg, transparent 0px, transparent 33px, rgba(110,90,60,0.16) 34px);
+  pointer-events:none;
+}
+[data-theme="dark"] .notebook-page::after{
+  background-image:repeating-linear-gradient(180deg, transparent 0px, transparent 33px, rgba(255,255,255,0.08) 34px);
+}
+/* red vertical margin line */
+.notebook-page::before{
+  content:'';
+  position:absolute; top:0; bottom:0; left:40px; width:1.5px;
+  background:rgba(186,70,70,0.45);
+}
+
+/* paper grain texture */
+.paper-grain{
+  position:absolute; inset:0; pointer-events:none; opacity:.5; mix-blend-mode:multiply;
+  background-image:
+    radial-gradient(rgba(0,0,0,0.025) 1px, transparent 1px),
+    radial-gradient(rgba(0,0,0,0.02) 1px, transparent 1px);
+  background-size:3px 3px, 7px 7px;
+  background-position:0 0, 2px 3px;
+}
+
+/* decorative elements */
+.bookmark-ribbon{
+  position:absolute; top:-4px; right:54px; width:26px; height:92px;
+  background:linear-gradient(180deg, var(--accent), #8a4f3a);
+  clip-path:polygon(0 0,100% 0,100% 100%,50% 78%,0 100%);
+  box-shadow:0 6px 10px rgba(0,0,0,0.25);
+  z-index:6;
+}
+.folded-corner{
+  position:absolute; right:0; bottom:0; width:0; height:0;
+  border-style:solid; border-width:0 0 38px 38px;
+  border-color:transparent transparent rgba(120,95,55,0.22) transparent;
+  filter:drop-shadow(-2px -2px 3px rgba(0,0,0,0.12));
+}
+.ink-splatter{
+  position:absolute; width:64px; height:64px; opacity:.06; pointer-events:none;
+  background:radial-gradient(circle at 30% 30%, #2b2118 0 3px, transparent 4px),
+             radial-gradient(circle at 60% 60%, #2b2118 0 5px, transparent 6px),
+             radial-gradient(circle at 75% 30%, #2b2118 0 2px, transparent 3px);
+}
+.paperclip{
+  position:absolute; top:-14px; left:36px; width:26px; height:54px;
+  border:4px solid #b9c2c9; border-radius:14px;
+  border-bottom-color:transparent; transform:rotate(-8deg);
+  box-shadow:1px 2px 3px rgba(0,0,0,0.25);
+  z-index:6;
+}
+.paperclip::after{
+  content:''; position:absolute; left:5px; top:6px; width:12px; height:34px;
+  border:4px solid #b9c2c9; border-radius:10px; border-top-color:transparent;
+}
+.washi-tape{
+  position:absolute; top:-10px; left:50%; transform:translateX(-50%) rotate(-2deg);
+  width:120px; height:26px;
+  background:repeating-linear-gradient(45deg, var(--blue) 0 8px, var(--green) 8px 16px);
+  opacity:.7; box-shadow:0 3px 6px rgba(0,0,0,0.15);
+  z-index:6;
+}
+.coffee-stain{
+  position:absolute; bottom:60px; right:60px; width:90px; height:90px; border-radius:50%;
+  border:6px solid rgba(120,80,40,0.06); opacity:.7; pointer-events:none;
+}
+.vintage-stamp{
+  position:absolute; bottom:18px; right:24px; width:64px; height:64px;
+  border:2px dashed rgba(120,80,40,0.35); border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif; font-size:9px; letter-spacing:1px; text-align:center;
+  color:rgba(120,80,40,0.45); transform:rotate(-12deg); opacity:.8; pointer-events:none;
+}
+
+/* header */
+.diary-header{ position:relative; z-index:2; }
+.diary-header .titleRow{ display:flex; align-items:baseline; gap:10px; margin-bottom:6px; }
+.diary-header .titleRow h2{
+  font-family:'Playfair Display', serif; font-style:italic; font-weight:700; font-size:26px; color:#3b2c1d;
+}
+[data-theme="dark"] .diary-header .titleRow h2{ color:#e9dcc3; }
+.diary-meta{
+  display:flex; flex-wrap:wrap; gap:14px 22px; align-items:center; margin-bottom:14px;
+  font-family:'Patrick Hand', cursive; font-size:15px; color:#6b5640;
+}
+[data-theme="dark"] .diary-meta{ color:#c9b896; }
+.diary-meta .metaItem{ display:flex; align-items:center; gap:6px; }
+.diary-divider{
+  border:none; height:2px; margin:0 0 18px;
+  background:linear-gradient(90deg, transparent, rgba(120,80,40,0.4), transparent);
+  position:relative;
+}
+.diary-divider::after{
+  content:'❧'; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  background:inherit; color:rgba(120,80,40,0.55); font-size:15px; padding:0 8px;
+}
+
+/* mood selector restyle for notebook (reuses #moodPicker id) */
+.notebook-page .moodPicker{ display:flex; gap:8px; flex-wrap:wrap; }
+.notebook-page .moodOpt{
+  border:1.5px dashed rgba(120,80,40,0.35); background:rgba(255,255,255,0.35);
+  font-family:'Patrick Hand', cursive; font-size:13px; padding:6px 10px; border-radius:50px;
+}
+[data-theme="dark"] .notebook-page .moodOpt{ background:rgba(255,255,255,0.05); }
+.notebook-page .moodOpt.selected{ border-style:solid; border-color:var(--accent); background:rgba(201,138,107,0.16); }
+
+/* title + date inputs styled to blend on paper */
+.diary-input-title{
+  font-family:'Playfair Display', serif; font-style:italic; font-weight:600; font-size:21px;
+  background:transparent; border:none; border-bottom:1.5px dotted rgba(120,80,40,0.4);
+  color:#3b2c1d; padding:4px 2px 8px; width:100%; outline:none;
+}
+[data-theme="dark"] .diary-input-title{ color:#e9dcc3; }
+.diary-input-title::placeholder{ color:rgba(120,80,40,0.4); font-style:italic; }
+.diary-date-input{
+  font-family:'Patrick Hand', cursive; background:transparent; border:none; border-bottom:1px dotted rgba(120,80,40,0.35);
+  color:#6b5640; padding:2px 2px 4px; outline:none; font-size:14px;
+}
+[data-theme="dark"] .diary-date-input{ color:#c9b896; }
+
+/* the handwritten writing area itself */
+.diary-writing-area{
+  position:relative; z-index:2; flex:1; display:flex; flex-direction:column; margin-top:6px;
+}
+.diary-textarea{
+  flex:1; width:100%; min-height:340px;
+  background:transparent; border:none; outline:none; resize:none;
+  font-family:'Caveat', cursive; font-size:25px; line-height:34px; color:#3a2e1f;
+  caret-color:#7a4a2c;
+}
+[data-theme="dark"] .diary-textarea{ color:#ecdfc4; caret-color:#d8a878; }
+.diary-textarea::placeholder{ color:rgba(90,70,45,0.45); font-style:italic; }
+
+.diary-footer-row{
+  display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+  margin-top:14px; position:relative; z-index:2;
+}
+.diary-wordcount{ font-family:'Patrick Hand', cursive; font-size:13px; color:#8a7355; }
+[data-theme="dark"] .diary-wordcount{ color:#b8a584; }
+.diary-draftnote{ font-family:'Patrick Hand', cursive; font-size:12.5px; color:var(--green-deep); }
+
+.diary-actions{ display:flex; gap:12px; flex-wrap:wrap; margin-top:20px; position:relative; z-index:2; }
+.btn-vintage{
+  font-family:'Patrick Hand', cursive; font-size:16px; letter-spacing:.3px;
+  background:linear-gradient(160deg,#8a5a3a,#5e3a22);
+  color:#f6e8cf; border:1px solid rgba(0,0,0,0.2);
+  padding:11px 26px; border-radius:8px;
+  box-shadow:0 6px 0 #432712, 0 10px 16px rgba(0,0,0,0.3);
+  cursor:pointer; transition:transform .15s, box-shadow .15s;
+}
+.btn-vintage:hover{ transform:translateY(-2px); box-shadow:0 8px 0 #432712, 0 14px 20px rgba(0,0,0,0.32); }
+.btn-vintage:active{ transform:translateY(3px); box-shadow:0 2px 0 #432712, 0 4px 8px rgba(0,0,0,0.25); }
+.btn-quill{
+  font-family:'Patrick Hand', cursive; font-size:15px;
+  background:transparent; border:1.5px dashed rgba(120,80,40,0.45); color:#6b4a2c;
+  padding:10px 20px; border-radius:8px; cursor:pointer; transition:.2s;
+}
+[data-theme="dark"] .btn-quill{ color:#d8c5a0; border-color:rgba(216,197,160,0.4); }
+.btn-quill:hover{ background:rgba(120,80,40,0.08); }
+
+/* responsive: single page on mobile */
+@media (max-width:880px){
+  .notebook{ flex-direction:column; box-shadow:0 24px 50px rgba(0,0,0,0.4); }
+  .notebook-spine{ display:none; }
+  .notebook-page.left{ border-radius:14px 14px 0 0; padding:40px 26px 30px 44px; }
+  .notebook-page.right{ border-radius:0 0 14px 14px; padding:30px 26px 36px 44px; }
+  .notebook-page::after{ left:44px; right:18px; top:auto; }
+  .notebook-page::before{ left:26px; }
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:900px){
+  .sidebar{position:fixed; left:0; top:0; transform:translateX(-100%); z-index:300;}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-toggle{display:flex; }
+  .main{padding:20px 18px 70px;}
+}
+@media (max-width:520px){
+  .hero h2{font-size:22px;}
+  .hero .clock{font-size:26px;}
+  .searchBox input{width:160px;}
+  .searchBox input:focus{width:190px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============ LOADING SCREEN ============ -->
+<div id="loadingScreen">
+  <div class="book"></div>
+  <p>Opening your diary…</p>
+</div>
+
+<div id="progressBar" class="progressBar" style="width:0%;"></div>
+
+<div class="app">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="icon">📔</span>
+      <div>
+        <h1>Digital Diary</h1>
+        <span>by Ayush Yadav</span>
+      </div>
+    </div>
+    <nav>
+      <div class="nav-item active" data-page="dashboard"><span class="emoji">🏠</span> Dashboard</div>
+      <div class="nav-item" data-page="newEntry"><span class="emoji">📝</span> New Entry</div>
+      <div class="nav-item" data-page="allEntries"><span class="emoji">📖</span> All Entries</div>
+      <div class="nav-item" data-page="favorites"><span class="emoji">❤️</span> Favorites</div>
+      <div class="nav-item" data-page="calendar"><span class="emoji">📅</span> Calendar</div>
+      <div class="nav-item" data-page="analytics"><span class="emoji">📊</span> Analytics</div>
+      <div class="nav-item" data-page="settings"><span class="emoji">⚙</span> Settings</div>
+    </nav>
+    <div class="sidebar-footer">Ashirwad Public High School<br>Holiday Homework Project</div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <main class="main">
+    <div class="topbar">
+      <button class="iconBtn sidebar-toggle" id="menuToggle">☰</button>
+      <h2 id="pageTitle">Dashboard</h2>
+      <div style="display:flex; gap:10px; align-items:center;">
+        <div class="searchBox"><input type="text" id="globalSearch" placeholder="Search entries..."></div>
+        <button class="iconBtn" id="darkToggle" title="Toggle dark mode">🌙</button>
+      </div>
+    </div>
+
+    <!-- ===================== DASHBOARD PAGE ===================== -->
+    <section class="page active" id="page-dashboard">
+      <div class="hero">
+        <div id="greeting">Good Morning, Ayush!</div>
+        <h2 id="greetingText">Good Morning, Ayush!</h2>
+        <div class="datestr" id="todayDate">Loading date...</div>
+        <div class="clock" id="liveClock">00:00:00</div>
+        <div class="quote" id="quoteOfDay">"Loading inspiration..."</div>
+      </div>
+
+      <div class="statGrid" id="statGrid"></div>
+
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+          <h3 style="font-family:var(--font-display);">Recent Entries</h3>
+          <button class="btn btn-primary btn-sm" onclick="goPage('newEntry')">+ New Entry</button>
+        </div>
+        <div class="entriesGrid" id="recentEntries"></div>
+      </div>
+    </section>
+
+    <!-- ===================== NEW ENTRY PAGE — NOTEBOOK REDESIGN ===================== -->
+    <section class="page" id="page-newEntry">
+      <div class="notebook-stage">
+        <div class="notebook" id="notebook">
+          <!-- LEFT PAGE: header / meta -->
+          <div class="notebook-page left">
+            <div class="paper-grain"></div>
+            <div class="washi-tape"></div>
+            <div class="paperclip"></div>
+            <div class="ink-splatter" style="top:60%; left:10%;"></div>
+            <div class="coffee-stain"></div>
+
+            <input type="hidden" id="editingId">
+
+            <div class="diary-header">
+              <div class="titleRow">
+                <h2>📖 My Diary</h2>
+              </div>
+              <div class="diary-meta">
+                <span class="metaItem" id="diaryTodayDate">📅 Loading...</span>
+                <span class="metaItem" id="diaryNowTime">🕐 --:--</span>
+                <span class="metaItem">⛅ <span id="diaryWeather">Sunny</span></span>
+              </div>
+              <hr class="diary-divider">
+            </div>
+
+            <div style="margin-bottom:18px;">
+              <input type="text" id="entryTitle" class="diary-input-title" placeholder="Today's title…">
+            </div>
+            <div style="margin-bottom:22px;">
+              <input type="date" id="entryDate" class="diary-date-input">
+            </div>
+
+            <div>
+              <div style="font-family:'Patrick Hand',cursive; font-size:14px; color:#8a7355; margin-bottom:8px;">How are you feeling?</div>
+              <div class="moodPicker" id="moodPicker"></div>
+            </div>
+
+            <div class="vintage-stamp">ASHIRWAD<br>DIARY<br>★</div>
+          </div>
+
+          <!-- SPINE -->
+          <div class="notebook-spine"></div>
+
+          <!-- RIGHT PAGE: writing area -->
+          <div class="notebook-page right">
+            <div class="paper-grain"></div>
+            <div class="bookmark-ribbon"></div>
+            <div class="folded-corner"></div>
+            <div class="ink-splatter" style="bottom:25%; left:6%;"></div>
+
+            <div class="diary-writing-area">
+              <textarea id="entryContent" class="diary-textarea" placeholder="Dear Diary, today..."></textarea>
+            </div>
+
+            <div class="diary-footer-row">
+              <div class="diary-wordcount" id="wordCounter">0 words • 0 characters</div>
+              <div class="diary-draftnote" id="draftNote"></div>
+            </div>
+
+            <div class="diary-actions">
+              <button class="btn-vintage" id="saveEntryBtn">💾 Save to Diary</button>
+              <button class="btn-quill" id="promptBtn">🪶 Random Prompt</button>
+              <button class="btn-quill" id="clearDraftBtn">✖ Clear Page</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== ALL ENTRIES PAGE ===================== -->
+    <section class="page" id="page-allEntries">
+      <div class="toolsRow" id="moodFilters"></div>
+      <div class="entriesGrid" id="allEntriesGrid"></div>
+    </section>
+
+    <!-- ===================== FAVORITES PAGE ===================== -->
+    <section class="page" id="page-favorites">
+      <div class="entriesGrid" id="favEntriesGrid"></div>
+    </section>
+
+    <!-- ===================== CALENDAR PAGE ===================== -->
+    <section class="page" id="page-calendar">
+      <div class="card">
+        <div class="calHeader">
+          <button class="iconBtn" id="prevMonth">‹</button>
+          <h3 id="calMonthLabel">Month Year</h3>
+          <button class="iconBtn" id="nextMonth">›</button>
+        </div>
+        <div class="calGrid" id="calGrid"></div>
+      </div>
+      <div class="card" style="margin-top:18px;">
+        <h3 style="font-family:var(--font-display); margin-bottom:12px;" id="calSelectedLabel">Select a date</h3>
+        <div class="entriesGrid" id="calSelectedEntries"></div>
+      </div>
+    </section>
+
+    <!-- ===================== ANALYTICS PAGE ===================== -->
+    <section class="page" id="page-analytics">
+      <div class="chartCard card">
+        <h3>Mood Distribution</h3>
+        <canvas id="moodChart" width="600" height="260"></canvas>
+      </div>
+      <div class="chartCard card">
+        <h3>Weekly Entries (last 7 days)</h3>
+        <canvas id="weeklyChart" width="600" height="220"></canvas>
+      </div>
+      <div class="chartCard card">
+        <h3>Monthly Entries (this year)</h3>
+        <canvas id="monthlyChart" width="600" height="240"></canvas>
+      </div>
+    </section>
+
+    <!-- ===================== SETTINGS PAGE ===================== -->
+    <section class="page" id="page-settings">
+      <div class="card">
+        <div class="settingsRow">
+          <div><strong>Dark Mode</strong><div style="font-size:12px;color:var(--ink-soft);">Easier on the eyes at night</div></div>
+          <label class="switch"><input type="checkbox" id="darkSwitch"><span class="slider"></span></label>
+        </div>
+        <div class="settingsRow">
+          <div><strong>Accent Color</strong><div style="font-size:12px;color:var(--ink-soft);">Choose your diary's vibe</div></div>
+          <div class="colorSwatches" id="colorSwatches"></div>
+        </div>
+        <div class="settingsRow">
+          <div><strong>Font Size</strong><div style="font-size:12px;color:var(--ink-soft);">Adjust reading comfort</div></div>
+          <input type="range" id="fontSlider" min="14" max="20" value="16">
+        </div>
+        <div class="settingsRow">
+          <div><strong>Export Data</strong><div style="font-size:12px;color:var(--ink-soft);">Download your diary</div></div>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-outline btn-sm" id="exportTxt">Export TXT</button>
+            <button class="btn btn-outline btn-sm" id="exportJson">Export JSON</button>
+          </div>
+        </div>
+        <div class="settingsRow">
+          <div><strong>Import Data</strong><div style="font-size:12px;color:var(--ink-soft);">Restore from a JSON backup</div></div>
+          <div>
+            <input type="file" id="importFile" accept=".json" style="display:none;">
+            <button class="btn btn-outline btn-sm" id="importBtn">Import JSON</button>
+          </div>
+        </div>
+        <div class="settingsRow">
+          <div><strong>Reset All Data</strong><div style="font-size:12px;color:var(--ink-soft);">Permanently erase everything</div></div>
+          <button class="btn btn-danger btn-sm" id="resetBtn">Reset</button>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">Made with <span class="heart">♥</span> by Ayush Yadav — Ashirwad Public High School &bull; Keyboard shortcuts: <strong>N</strong> new entry, <strong>F</strong> search</div>
+  </main>
+</div>
+
+<!-- ============ READING MODE MODAL ============ -->
+<div class="modalOverlay" id="readModal">
+  <div class="modalBox" id="readModalBox">
+    <button class="closeX" data-close="readModal">✕</button>
+    <div id="readModalContent"></div>
+  </div>
+</div>
+
+<!-- ============ CONFIRM DELETE MODAL ============ -->
+<div class="modalOverlay" id="confirmModal">
+  <div class="modalBox confirmBox">
+    <div class="icon">🗑️</div>
+    <h2>Delete this entry?</h2>
+    <p style="color:var(--ink-soft); font-size:14px;">This action cannot be undone.</p>
+    <div class="actions">
+      <button class="btn btn-outline" data-close="confirmModal">Cancel</button>
+      <button class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+    </div>
+  </div>
+</div>
+
+<button class="iconBtn" id="scrollTop">↑</button>
+<div id="toastWrap"></div>
+
+<script>
+/* ============================================================
+   DIGITAL DIARY — APPLICATION LOGIC
+   All data persists in localStorage. No backend / frameworks.
+   ============================================================ */
+
+/* ---------- Constants ---------- */
+const MOODS = [
+  {key:'happy', emoji:'😀', label:'Happy', color:'#f6c453'},
+  {key:'excited', emoji:'😊', label:'Excited', color:'#f29a6b'},
+  {key:'calm', emoji:'😌', label:'Calm', color:'#a9c9d6'},
+  {key:'normal', emoji:'😐', label:'Normal', color:'#c9c2b3'},
+  {key:'sad', emoji:'😢', label:'Sad', color:'#8aa6c2'},
+  {key:'angry', emoji:'😡', label:'Angry', color:'#e08585'},
+  {key:'tired', emoji:'😴', label:'Tired', color:'#b7a8d6'}
+];
+const QUOTES = [
+  "Write what disturbs you, what you fear, what you have not been willing to speak about.",
+  "Fill your paper with the breathings of your heart. — William Wordsworth",
+  "A diary is an assassin's bullet aimed at oneself, with brutal honesty.",
+  "Today is a good day to start a new page.",
+  "Your story matters, even the quiet chapters.",
+  "Every day may not be good, but there is something good in every day.",
+  "Diaries are made for inconvenient truths. — Anais Nin",
+  "Small moments, written down, become big memories."
+];
+const PROMPTS = [
+  "What made you smile today?",
+  "Describe a challenge you faced and how you handled it.",
+  "Write about someone who inspired you recently.",
+  "What are you grateful for right now?",
+  "If today had a color, what would it be and why?",
+  "What's something new you learned today?",
+  "Describe your ideal tomorrow.",
+  "Write a letter to your future self.",
+  "What's a small win you had today?",
+  "What sound, smell, or sight stood out today?"
+];
+const ACCENTS = ['#c98a6b','#6f9bb0','#7fa97c','#b08bc9','#d68a9c','#cba35c'];
+
+/* ---------- State ---------- */
+let entries = JSON.parse(localStorage.getItem('diary_entries') || '[]');
+let settings = JSON.parse(localStorage.getItem('diary_settings') || '{}');
+settings = Object.assign({theme:'light', accent:'#c98a6b', fontSize:16}, settings);
+let selectedMood = MOODS[0].key;
+let currentFilterMood = 'all';
+let calDate = new Date();
+let calSelectedDate = null;
+let deleteTargetId = null;
+
+/* ---------- Helpers ---------- */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => document.querySelectorAll(sel);
+function saveEntries(){ localStorage.setItem('diary_entries', JSON.stringify(entries)); }
+function saveSettings(){ localStorage.setItem('diary_settings', JSON.stringify(settings)); }
+function uid(){ return 'e' + Date.now() + Math.random().toString(36).slice(2,7); }
+function moodInfo(key){ return MOODS.find(m=>m.key===key) || MOODS[3]; }
+function fmtDate(d){
+  return new Date(d+'T00:00:00').toLocaleDateString('en-US',{weekday:'short', year:'numeric', month:'short', day:'numeric'});
+}
+function todayISO(){
+  const d = new Date(); 
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function toast(msg, icon='✅'){
+  const t = document.createElement('div');
+  t.className = 'toast';
+  t.innerHTML = `<span>${icon}</span><span>${msg}</span>`;
+  $('#toastWrap').appendChild(t);
+  setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(40px)'; setTimeout(()=>t.remove(),300); }, 2600);
+}
+function applyRipple(e){
+  const btn = e.currentTarget;
+  const circle = document.createElement('span');
+  const d = Math.max(btn.clientWidth, btn.clientHeight);
+  circle.style.width = circle.style.height = d+'px';
+  circle.style.left = (e.clientX - btn.getBoundingClientRect().left - d/2)+'px';
+  circle.style.top = (e.clientY - btn.getBoundingClientRect().top - d/2)+'px';
+  circle.classList.add('ripple');
+  btn.appendChild(circle);
+  setTimeout(()=>circle.remove(),600);
+}
+$$('.btn, .iconBtn, .nav-item, .filterChip').forEach(b=> b.style.position = b.style.position || 'relative');
+document.addEventListener('click', (e)=>{
+  const btn = e.target.closest('.btn, .iconBtn');
+  if(btn) applyRipple({currentTarget:btn, clientX:e.clientX, clientY:e.clientY});
+});
+
+/* ---------- Theme / settings apply ---------- */
+function applySettings(){
+  document.documentElement.setAttribute('data-theme', settings.theme);
+  document.documentElement.style.setProperty('--accent', settings.accent);
+  document.documentElement.style.setProperty('--font-size-base', settings.fontSize+'px');
+  $('#darkSwitch').checked = settings.theme === 'dark';
+  $('#darkToggle').textContent = settings.theme === 'dark' ? '☀️' : '🌙';
+  $('#fontSlider').value = settings.fontSize;
+}
+
+/* ---------- Navigation ---------- */
+function goPage(page){
+  $$('.page').forEach(p=>p.classList.remove('active'));
+  $('#page-'+page).classList.add('active');
+  $$('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.querySelector(`.nav-item[data-page="${page}"]`).classList.add('active');
+  const titles = {dashboard:'Dashboard', newEntry:'New Entry', allEntries:'All Entries', favorites:'Favorites', calendar:'Calendar', analytics:'Analytics', settings:'Settings'};
+  $('#pageTitle').textContent = titles[page];
+  if(page==='allEntries') renderAllEntries();
+  if(page==='favorites') renderFavorites();
+  if(page==='calendar') renderCalendar();
+  if(page==='analytics') renderAnalytics();
+  if(page==='dashboard') renderDashboard();
+  if(window.innerWidth <= 900) $('#sidebar').classList.remove('open');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+$$('.nav-item').forEach(item=>{
+  item.addEventListener('click', ()=> goPage(item.dataset.page));
+});
+$('#menuToggle').addEventListener('click', ()=> $('#sidebar').classList.toggle('open'));
+
+/* ---------- Live clock & greeting ---------- */
+function updateClock(){
+  const now = new Date();
+  $('#liveClock').textContent = now.toLocaleTimeString();
+  $('#todayDate').textContent = now.toLocaleDateString('en-US',{weekday:'long', year:'numeric', month:'long', day:'numeric'});
+  const h = now.getHours();
+  let greet = h<12 ? 'Good Morning' : h<17 ? 'Good Afternoon' : 'Good Evening';
+  $('#greetingText').textContent = greet + ', Ayush!';
+  // notebook page header (diary writing page)
+  const dtEl = $('#diaryTodayDate'); const tmEl = $('#diaryNowTime');
+  if(dtEl) dtEl.textContent = '📅 ' + now.toLocaleDateString('en-US',{weekday:'short', month:'short', day:'numeric', year:'numeric'});
+  if(tmEl) tmEl.textContent = '🕐 ' + now.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+}
+setInterval(updateClock, 1000);
+
+/* ---------- Mood picker (new entry) ---------- */
+function renderMoodPicker(){
+  $('#moodPicker').innerHTML = MOODS.map(m=>
+    `<div class="moodOpt ${m.key===selectedMood?'selected':''}" data-mood="${m.key}" style="border-color:${m.key===selectedMood?m.color:''}">
+      <span>${m.emoji}</span><span>${m.label}</span>
+    </div>`).join('');
+  $$('#moodPicker .moodOpt').forEach(opt=>{
+    opt.addEventListener('click', ()=>{
+      selectedMood = opt.dataset.mood;
+      renderMoodPicker();
+    });
+  });
+}
+
+/* ---------- Word counter & draft autosave ---------- */
+let draftTimer = null;
+$('#entryContent').addEventListener('input', ()=>{
+  const text = $('#entryContent').value;
+  const words = text.trim() ? text.trim().split(/\s+/).length : 0;
+  $('#wordCounter').textContent = `${words} words • ${text.length} characters`;
+  clearTimeout(draftTimer);
+  draftTimer = setTimeout(saveDraft, 1500);
+});
+$('#entryTitle').addEventListener('input', ()=>{ clearTimeout(draftTimer); draftTimer = setTimeout(saveDraft, 1500); });
+
+function saveDraft(){
+  const draft = {
+    title: $('#entryTitle').value,
+    content: $('#entryContent').value,
+    mood: selectedMood,
+    date: $('#entryDate').value
+  };
+  localStorage.setItem('diary_draft', JSON.stringify(draft));
+  $('#draftNote').textContent = 'Draft auto-saved at ' + new Date().toLocaleTimeString();
+}
+function restoreDraft(){
+  const d = JSON.parse(localStorage.getItem('diary_draft') || 'null');
+  if(d && (d.title || d.content)){
+    $('#entryTitle').value = d.title || '';
+    $('#entryContent').value = d.content || '';
+    selectedMood = d.mood || MOODS[0].key;
+    $('#entryDate').value = d.date || todayISO();
+    $('#entryContent').dispatchEvent(new Event('input'));
+    $('#draftNote').textContent = 'Restored your unsaved draft.';
+    renderMoodPicker();
+  } else {
+    $('#entryDate').value = todayISO();
+  }
+}
+
+/* ---------- Save / edit entry ---------- */
+$('#saveEntryBtn').addEventListener('click', ()=>{
+  const title = $('#entryTitle').value.trim();
+  const content = $('#entryContent').value.trim();
+  const date = $('#entryDate').value || todayISO();
+  if(!title || !content){
+    toast('Please add a title and some content.', '⚠️');
+    return;
+  }
+  const editingId = $('#editingId').value;
+  if(editingId){
+    const e = entries.find(en=>en.id===editingId);
+    if(e){ e.title=title; e.content=content; e.mood=selectedMood; e.date=date; }
+    toast('Entry updated successfully!');
+  } else {
+    entries.unshift({id:uid(), title, content, mood:selectedMood, date, favorite:false, created:Date.now()});
+    toast('Entry saved to your diary!');
+  }
+  saveEntries();
+  localStorage.removeItem('diary_draft');
+  resetEntryForm();
+  goPage('allEntries');
+});
+
+function resetEntryForm(){
+  $('#editingId').value = '';
+  $('#entryTitle').value = '';
+  $('#entryContent').value = '';
+  $('#entryDate').value = todayISO();
+  selectedMood = MOODS[0].key;
+  renderMoodPicker();
+  $('#entryContent').dispatchEvent(new Event('input'));
+  $('#draftNote').textContent = '';
+}
+$('#clearDraftBtn').addEventListener('click', ()=>{
+  resetEntryForm();
+  localStorage.removeItem('diary_draft');
+  toast('Cleared.', '🗑️');
+});
+$('#promptBtn').addEventListener('click', ()=>{
+  const p = PROMPTS[Math.floor(Math.random()*PROMPTS.length)];
+  if(!$('#entryContent').value) $('#entryContent').value = p + '\n\n';
+  else $('#entryContent').value += '\n\n' + p + '\n\n';
+  $('#entryContent').dispatchEvent(new Event('input'));
+  $('#entryContent').focus();
+  toast('New writing prompt added!', '🎲');
+});
+
+/* ---------- Entry card rendering ---------- */
+function entryCardHTML(e){
+  const m = moodInfo(e.mood);
+  const preview = e.content.length > 110 ? e.content.slice(0,110)+'…' : e.content;
+  return `
+  <div class="card entryCard" data-id="${e.id}">
+    <button class="favBtn favTag" data-fav="${e.id}">${e.favorite ? '❤️' : '🤍'}</button>
+    <div class="topRow">
+      <span class="moodEmoji" style="color:${m.color}">${m.emoji}</span>
+    </div>
+    <h3>${escapeHTML(e.title)}</h3>
+    <div class="dateLine">${fmtDate(e.date)} • ${m.label}</div>
+    <div class="preview">${escapeHTML(preview)}</div>
+    <div class="cardActions">
+      <button class="btn btn-outline btn-sm" data-read="${e.id}">📖 Read More</button>
+      <button class="btn btn-outline btn-sm" data-edit="${e.id}">✏️ Edit</button>
+      <button class="btn btn-danger btn-sm" data-del="${e.id}">🗑️ Delete</button>
+    </div>
+  </div>`;
+}
+function escapeHTML(str){
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+function wireCardEvents(container){
+  container.querySelectorAll('[data-read]').forEach(b=> b.addEventListener('click', ()=> openReadModal(b.dataset.read)));
+  container.querySelectorAll('[data-edit]').forEach(b=> b.addEventListener('click', ()=> editEntry(b.dataset.edit)));
+  container.querySelectorAll('[data-del]').forEach(b=> b.addEventListener('click', ()=> { deleteTargetId = b.dataset.del; openModal('confirmModal'); }));
+  container.querySelectorAll('[data-fav]').forEach(b=> b.addEventListener('click', ()=> toggleFav(b.dataset.fav)));
+}
+
+function toggleFav(id){
+  const e = entries.find(en=>en.id===id);
+  if(e){ e.favorite = !e.favorite; saveEntries(); renderAllEntries(); renderFavorites(); renderDashboard(); toast(e.favorite ? 'Added to favorites' : 'Removed from favorites', '❤️'); }
+}
+function editEntry(id){
+  const e = entries.find(en=>en.id===id);
+  if(!e) return;
+  $('#editingId').value = e.id;
+  $('#entryTitle').value = e.title;
+  $('#entryContent').value = e.content;
+  $('#entryDate').value = e.date;
+  selectedMood = e.mood;
+  renderMoodPicker();
+  $('#entryContent').dispatchEvent(new Event('input'));
+  goPage('newEntry');
+  toast('Editing entry...', '✏️');
+}
+function openReadModal(id){
+  const e = entries.find(en=>en.id===id);
+  if(!e) return;
+  const m = moodInfo(e.mood);
+  $('#readModalContent').innerHTML = `
+    <h2>${escapeHTML(e.title)}</h2>
+    <div class="readMeta">${m.emoji} ${m.label} • ${fmtDate(e.date)}</div>
+    <div class="readBody">${escapeHTML(e.content)}</div>`;
+  openModal('readModal');
+}
+
+/* ---------- Modal helpers ---------- */
+function openModal(id){ $('#'+id).classList.add('show'); }
+function closeModal(id){ $('#'+id).classList.remove('show'); }
+$$('[data-close]').forEach(b=> b.addEventListener('click', ()=> closeModal(b.dataset.close)));
+$$('.modalOverlay').forEach(ov=> ov.addEventListener('click', (e)=>{ if(e.target===ov) ov.classList.remove('show'); }));
+$('#confirmDeleteBtn').addEventListener('click', ()=>{
+  entries = entries.filter(e=>e.id!==deleteTargetId);
+  saveEntries();
+  closeModal('confirmModal');
+  renderAllEntries(); renderFavorites(); renderDashboard(); renderCalendar();
+  toast('Entry deleted.', '🗑️');
+});
+
+/* ---------- Render: Dashboard ---------- */
+function renderDashboard(){
+  // stats
+  const total = entries.length;
+  const happy = entries.filter(e=>e.mood==='happy').length;
+  const sad = entries.filter(e=>e.mood==='sad').length;
+  const longest = entries.reduce((a,b)=> (b.content.length > (a?a.content.length:0)) ? b : a, null);
+  const moodCount = {};
+  entries.forEach(e=> moodCount[e.mood] = (moodCount[e.mood]||0)+1);
+  let mostUsed = '—';
+  let max = 0;
+  for(const k in moodCount){ if(moodCount[k] > max){ max = moodCount[k]; mostUsed = moodInfo(k).emoji + ' ' + moodInfo(k).label; } }
+
+  $('#statGrid').innerHTML = `
+    <div class="card statCard"><div class="num">${total}</div><div class="label">Total Entries</div></div>
+    <div class="card statCard"><div class="num">${happy}</div><div class="label">Happy Days</div></div>
+    <div class="card statCard"><div class="num">${sad}</div><div class="label">Sad Days</div></div>
+    <div class="card statCard"><div class="num">${longest ? longest.content.split(/\s+/).length : 0}</div><div class="label">Longest Entry (words)</div></div>
+    <div class="card statCard"><div class="num" style="font-size:22px;">${mostUsed}</div><div class="label">Most Used Mood</div></div>
+  `;
+
+  const recent = entries.slice(0,6);
+  $('#recentEntries').innerHTML = recent.length ? recent.map(entryCardHTML).join('') : emptyStateHTML('No entries yet', 'Start writing your first diary entry!');
+  wireCardEvents($('#recentEntries'));
+
+  $('#quoteOfDay').textContent = '"' + QUOTES[new Date().getDate() % QUOTES.length] + '"';
+}
+function emptyStateHTML(title, sub){
+  return `<div class="emptyState" style="grid-column:1/-1;"><div class="big">🪶</div><h3 style="font-family:var(--font-display);">${title}</h3><p>${sub}</p></div>`;
+}
+
+/* ---------- Render: All entries (search + filter) ---------- */
+function renderAllEntries(){
+  $('#moodFilters').innerHTML = `<div class="filterChip ${currentFilterMood==='all'?'active':''}" data-mood="all">All</div>` +
+    MOODS.map(m=>`<div class="filterChip ${currentFilterMood===m.key?'active':''}" data-mood="${m.key}">${m.emoji} ${m.label}</div>`).join('');
+  $$('#moodFilters .filterChip').forEach(chip=>{
+    chip.addEventListener('click', ()=>{ currentFilterMood = chip.dataset.mood; renderAllEntries(); });
+  });
+
+  const q = $('#globalSearch').value.trim().toLowerCase();
+  let list = entries.filter(e=>{
+    const matchesMood = currentFilterMood==='all' || e.mood===currentFilterMood;
+    const matchesQuery = !q || e.title.toLowerCase().includes(q) || e.content.toLowerCase().includes(q) || moodInfo(e.mood).label.toLowerCase().includes(q);
+    return matchesMood && matchesQuery;
+  });
+  $('#allEntriesGrid').innerHTML = list.length ? list.map(entryCardHTML).join('') : emptyStateHTML('No entries found', 'Try a different search or filter.');
+  wireCardEvents($('#allEntriesGrid'));
+}
+$('#globalSearch').addEventListener('input', ()=>{
+  if(document.getElementById('page-allEntries').classList.contains('active')) renderAllEntries();
+  else goPage('allEntries');
+});
+
+/* ---------- Render: Favorites ---------- */
+function renderFavorites(){
+  const favs = entries.filter(e=>e.favorite);
+  $('#favEntriesGrid').innerHTML = favs.length ? favs.map(entryCardHTML).join('') : emptyStateHTML('No favorites yet', 'Tap the heart on an entry to save it here.');
+  wireCardEvents($('#favEntriesGrid'));
+}
+
+/* ---------- Render: Calendar ---------- */
+function renderCalendar(){
+  const year = calDate.getFullYear(), month = calDate.getMonth();
+  $('#calMonthLabel').textContent = calDate.toLocaleDateString('en-US',{month:'long', year:'numeric'});
+  const firstDay = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month+1, 0).getDate();
+  const dows = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = dows.map(d=>`<div class="dow">${d}</div>`).join('');
+  for(let i=0;i<firstDay;i++) html += `<div class="calDay empty"></div>`;
+  const todayStr = todayISO();
+  for(let d=1; d<=daysInMonth; d++){
+    const iso = year+'-'+String(month+1).padStart(2,'0')+'-'+String(d).padStart(2,'0');
+    const hasEntry = entries.some(e=>e.date===iso);
+    const isToday = iso===todayStr;
+    html += `<div class="calDay ${hasEntry?'hasEntry':''} ${isToday?'today':''}" data-date="${iso}">${d}${hasEntry?'<span class="dot"></span>':''}</div>`;
+  }
+  $('#calGrid').innerHTML = html;
+  $$('#calGrid .calDay[data-date]').forEach(c=> c.addEventListener('click', ()=>{ calSelectedDate = c.dataset.date; renderCalSelection(); }));
+  if(calSelectedDate) renderCalSelection();
+}
+function renderCalSelection(){
+  $('#calSelectedLabel').textContent = 'Entries on ' + fmtDate(calSelectedDate);
+  const list = entries.filter(e=>e.date===calSelectedDate);
+  $('#calSelectedEntries').innerHTML = list.length ? list.map(entryCardHTML).join('') : emptyStateHTML('Nothing written', 'No entries for this date.');
+  wireCardEvents($('#calSelectedEntries'));
+}
+$('#prevMonth').addEventListener('click', ()=>{ calDate.setMonth(calDate.getMonth()-1); renderCalendar(); });
+$('#nextMonth').addEventListener('click', ()=>{ calDate.setMonth(calDate.getMonth()+1); renderCalendar(); });
+
+/* ---------- Render: Analytics (canvas charts, no libraries) ---------- */
+function renderAnalytics(){
+  drawMoodChart();
+  drawWeeklyChart();
+  drawMonthlyChart();
+}
+function drawMoodChart(){
+  const c = $('#moodChart'); const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const counts = MOODS.map(m=> entries.filter(e=>e.mood===m.key).length);
+  const max = Math.max(...counts, 1);
+  const barW = (c.width-60) / MOODS.length;
+  MOODS.forEach((m,i)=>{
+    const h = (counts[i]/max) * (c.height-60);
+    const x = 40 + i*barW;
+    const y = c.height - 40 - h;
+    ctx.fillStyle = m.color;
+    ctx.fillRect(x, y, barW-14, h);
+    ctx.fillStyle = getComputedStyle(document.body).color;
+    ctx.font = '12px sans-serif';
+    ctx.textAlign='center';
+    ctx.fillText(m.emoji, x+(barW-14)/2, c.height-20);
+    ctx.fillText(counts[i], x+(barW-14)/2, y-8);
+  });
+}
+function drawWeeklyChart(){
+  const c = $('#weeklyChart'); const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const days = [];
+  for(let i=6;i>=0;i--){
+    const d = new Date(); d.setDate(d.getDate()-i);
+    const iso = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+    days.push({iso, label:d.toLocaleDateString('en-US',{weekday:'short'}), count: entries.filter(e=>e.date===iso).length});
+  }
+  const max = Math.max(...days.map(d=>d.count), 1);
+  const stepX = (c.width-60)/days.length;
+  ctx.strokeStyle = settings.accent; ctx.lineWidth=2.5; ctx.beginPath();
+  days.forEach((d,i)=>{
+    const x = 40 + i*stepX + stepX/2;
+    const y = c.height - 40 - (d.count/max)*(c.height-70);
+    if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    ctx.fillStyle = settings.accent;
+    setTimeout(()=>{}, 0);
+  });
+  ctx.stroke();
+  days.forEach((d,i)=>{
+    const x = 40 + i*stepX + stepX/2;
+    const y = c.height - 40 - (d.count/max)*(c.height-70);
+    ctx.beginPath(); ctx.arc(x,y,4,0,Math.PI*2); ctx.fillStyle=settings.accent; ctx.fill();
+    ctx.fillStyle = getComputedStyle(document.body).color;
+    ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(d.label, x, c.height-18);
+    ctx.fillText(d.count, x, y-10);
+  });
+}
+function drawMonthlyChart(){
+  const c = $('#monthlyChart'); const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  const year = new Date().getFullYear();
+  const monthsLabel = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+  const counts = Array(12).fill(0);
+  entries.forEach(e=>{
+    const d = new Date(e.date+'T00:00:00');
+    if(d.getFullYear()===year) counts[d.getMonth()]++;
+  });
+  const max = Math.max(...counts,1);
+  const barW = (c.width-60)/12;
+  counts.forEach((cnt,i)=>{
+    const h = (cnt/max)*(c.height-60);
+    const x = 40+i*barW;
+    const y = c.height-40-h;
+    ctx.fillStyle = settings.accent;
+    ctx.fillRect(x,y,barW-8,h);
+    ctx.fillStyle = getComputedStyle(document.body).color;
+    ctx.font='11px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(monthsLabel[i], x+(barW-8)/2, c.height-20);
+    if(cnt>0) ctx.fillText(cnt, x+(barW-8)/2, y-6);
+  });
+}
+
+/* ---------- Settings page wiring ---------- */
+function renderColorSwatches(){
+  $('#colorSwatches').innerHTML = ACCENTS.map(c=>`<div class="swatch ${settings.accent===c?'active':''}" style="background:${c}" data-color="${c}"></div>`).join('');
+  $$('#colorSwatches .swatch').forEach(sw=> sw.addEventListener('click', ()=>{
+    settings.accent = sw.dataset.color; saveSettings(); applySettings(); renderColorSwatches(); toast('Accent color updated!', '🎨');
+  }));
+}
+$('#darkSwitch').addEventListener('change', (e)=>{
+  settings.theme = e.target.checked ? 'dark' : 'light';
+  saveSettings(); applySettings();
+});
+$('#darkToggle').addEventListener('click', ()=>{
+  settings.theme = settings.theme==='dark' ? 'light' : 'dark';
+  saveSettings(); applySettings();
+});
+$('#fontSlider').addEventListener('input', (e)=>{
+  settings.fontSize = e.target.value; saveSettings(); applySettings();
+});
+$('#exportTxt').addEventListener('click', ()=>{
+  let txt = "DIGITAL DIARY EXPORT — Ayush Yadav\n\n";
+  entries.forEach(e=>{ txt += `Title: ${e.title}\nDate: ${e.date}\nMood: ${moodInfo(e.mood).label}\n\n${e.content}\n\n----------------------\n\n`; });
+  downloadFile(txt, 'diary_export.txt', 'text/plain');
+  toast('Exported as TXT!', '📄');
+});
+$('#exportJson').addEventListener('click', ()=>{
+  downloadFile(JSON.stringify(entries, null, 2), 'diary_export.json', 'application/json');
+  toast('Exported as JSON!', '📦');
+});
+function downloadFile(content, filename, type){
+  const blob = new Blob([content], {type});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
+$('#importBtn').addEventListener('click', ()=> $('#importFile').click());
+$('#importFile').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    try{
+      const imported = JSON.parse(ev.target.result);
+      if(Array.isArray(imported)){
+        imported.forEach(item=>{ if(item.title && item.content){ item.id = item.id || uid(); entries.push(item); } });
+        saveEntries();
+        toast('Imported ' + imported.length + ' entries!', '📥');
+        renderDashboard();
+      } else {
+        toast('Invalid file format.', '⚠️');
+      }
+    } catch(err){ toast('Could not parse JSON file.', '⚠️'); }
+  };
+  reader.readAsText(file);
+});
+$('#resetBtn').addEventListener('click', ()=>{
+  if(confirm('This will permanently delete ALL diary entries. Are you sure?')){
+    entries = [];
+    saveEntries();
+    localStorage.removeItem('diary_draft');
+    renderDashboard(); renderAllEntries(); renderFavorites(); renderCalendar();
+    toast('All data has been reset.', '🧹');
+  }
+});
+
+/* ---------- Scroll to top ---------- */
+window.addEventListener('scroll', ()=>{
+  $('#scrollTop').style.display = window.scrollY > 300 ? 'flex' : 'none';
+});
+$('#scrollTop').addEventListener('click', ()=> window.scrollTo({top:0, behavior:'smooth'}));
+
+/* ---------- Reading progress bar (inside reading modal) ---------- */
+$('#readModalBox').addEventListener('scroll', function(){
+  const el = this;
+  const pct = (el.scrollTop / (el.scrollHeight - el.clientHeight || 1)) * 100;
+  $('#progressBar').style.width = pct + '%';
+});
+
+/* ---------- Keyboard shortcuts ---------- */
+document.addEventListener('keydown', (e)=>{
+  if(e.target.tagName==='INPUT' || e.target.tagName==='TEXTAREA') return;
+  if(e.key.toLowerCase()==='n'){ goPage('newEntry'); }
+  if(e.key.toLowerCase()==='f'){ goPage('allEntries'); $('#globalSearch').focus(); }
+  if(e.key==='Escape'){ $$('.modalOverlay.show').forEach(m=>m.classList.remove('show')); }
+});
+
+/* ---------- Init ---------- */
+function init(){
+  renderMoodPicker();
+  restoreDraft();
+  renderColorSwatches();
+  applySettings();
+  updateClock();
+  renderDashboard();
+  renderAllEntries();
+  renderFavorites();
+  renderCalendar();
+
+  setTimeout(()=>{ $('#loadingScreen').classList.add('hidden'); }, 900);
+}
+init();
+</script>
+</body>
+</html>
